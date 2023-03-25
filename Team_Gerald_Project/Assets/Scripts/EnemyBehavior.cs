@@ -59,11 +59,13 @@ public class EnemyBehavior : MonoBehaviour
         //generate a path
         timeSincePath = 0f;
         p = seeker.StartPath(transform.position, target.position);
+        currentWaypoint = 0;
     }
 
     //applies a force pushing the rigidbody along the path
     void FollowPath(float amount)
     {
+        
         //check if path is null
         if (p == null) return;
         //check if the path is completed

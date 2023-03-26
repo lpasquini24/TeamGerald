@@ -12,7 +12,7 @@ public class AimManager : MonoBehaviour
     private Transform held;
     [SerializeField]
     private float HandOffset = 1f;
-
+    public Vector3 to;
     private Transform Player;
     //we use a value to store all of our eulerangle changes and then implement them at the end
     //this is for strange magical unity angle reasons that I don't understand
@@ -50,7 +50,7 @@ public class AimManager : MonoBehaviour
        // }
         
         //get a vector going from the mouse position to the player position
-        Vector3 to = mousePos - playerPos;
+        to = mousePos - playerPos;
         //calculate the angle of the vector
         float angle = (Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg);
         //rotate the gun to face the mouse cursor

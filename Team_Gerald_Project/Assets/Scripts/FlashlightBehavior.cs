@@ -78,7 +78,7 @@ public class FlashlightBehavior : MonoBehaviour
             light.intensity += Random.Range(-flickerAmount, flickerAmount);
             yield return new WaitForSeconds(Random.Range(0.0001f, flickerLength));
             light.intensity = intensity;
-            yield return new WaitForSeconds(Random.Range(minFlickerDelay, minFlickerDelay));
+            yield return new WaitForSeconds(Random.Range(minFlickerDelay, maxFlickerDelay));
         }
     }
 }

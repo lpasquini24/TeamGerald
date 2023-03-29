@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float MaxSpeed;
     private Rigidbody2D rb;
+    public bool canMove = true;
 
 
     // Start is called before the first frame update
@@ -38,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         //{
         //   NewVelocity.y = -MaxSpeed;
         //}
-        if (NewVelocity.magnitude > MaxSpeed) NewVelocity = NewVelocity.normalized * MaxSpeed;
+        if (canMove && NewVelocity.magnitude > MaxSpeed) NewVelocity = NewVelocity.normalized * MaxSpeed;
         rb.velocity = NewVelocity;
     }
 }

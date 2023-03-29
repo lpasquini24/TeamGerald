@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         //{
         //   NewVelocity.y = -MaxSpeed;
         //}
-        if (canMove && NewVelocity.magnitude > MaxSpeed) NewVelocity = NewVelocity.normalized * MaxSpeed;
-        rb.velocity = NewVelocity;
+        if (NewVelocity.magnitude > MaxSpeed) NewVelocity = NewVelocity.normalized * MaxSpeed;
+        if (canMove) rb.velocity = NewVelocity;
     }
 }

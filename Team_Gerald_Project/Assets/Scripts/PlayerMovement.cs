@@ -10,12 +10,14 @@ public class PlayerMovement : MonoBehaviour
     private float MaxSpeed;
     private Rigidbody2D rb;
     public bool canMove = true;
+    static public int batteryCount;
 
 
     // Start is called before the first frame update
     void Start()
     {
         rb = this.GetComponent<Rigidbody2D>();
+        batteryCount = 0;
     }
 
     // Update is called once per frame
@@ -41,5 +43,14 @@ public class PlayerMovement : MonoBehaviour
         //}
         if (NewVelocity.magnitude > MaxSpeed) NewVelocity = NewVelocity.normalized * MaxSpeed;
         if (canMove) rb.velocity = NewVelocity;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Battery"))
+        {
+            collision.gameObject.SetActive(false);
+            batteryCount += 1;
+        }
     }
 }

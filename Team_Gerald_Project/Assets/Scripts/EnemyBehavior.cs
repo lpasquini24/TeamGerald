@@ -11,17 +11,26 @@ public class EnemyBehavior : MonoBehaviour
     //enums
 
     //manages the state that the enemy is currently in
-    private enum EnemyState { Passive, Chase, Attack };
+    private enum EnemyState { Start, Prowl, Hunt, Chase, Kill, Flee };
 
     //serialized parameters
 
     //when the enemy is this far from the current waypoint, they move on to the next waypoint
     [SerializeField] float nextWaypointDistance;
-    //the transform that the enemy will pathfind towards when chasing
-    [SerializeField] Transform chaseTarget;
-    //the speed at which the enemy will chase the target
+
+    //the player transform
+    [SerializeField] Transform player;
+    //the target that the enemy will follow when prowling
+    [SerializeField] float prowlRadius;
+    //the speed at which the enemy will prowl around
+    [SerializeField] float prowlSpeed;
+    //the speed at which the enemy will hunt the player
+    [SerializeField] float huntSpeed;
+    //the speed at which the enemy will chase the player
     [SerializeField] float chaseSpeed;
-    
+    //the speed at which the enemy will flee
+    [SerializeField] float fleeSpeed;
+
     //references
 
     private Seeker seeker;
@@ -35,9 +44,11 @@ public class EnemyBehavior : MonoBehaviour
     private int currentWaypoint = 0;
     private bool pathCompleted = false;
     //stores the state that the enemy is currently in
-    private EnemyState state = EnemyState.Passive;
+    [SerializeField] private EnemyState state = EnemyState.Start;
     //stores the time since a path has been generated
     private float timeSincePath;
+    private Vector3 spawnPoint;
+    private EnemyState prevState;
 
     
     void Start()
@@ -46,10 +57,9 @@ public class EnemyBehavior : MonoBehaviour
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         //auto-assign the target to the player
-        if (chaseTarget == null) chaseTarget = GameObject.FindWithTag("Player").transform;
-
-        //makes the enemy chase the player by default, for testing
-        state = EnemyState.Chase;
+        if (player == null) player = GameObject.FindWithTag("Player").transform;
+        //autoassign the spawnpoint
+        spawnPoint = transform.position;
         
     }
 
@@ -60,6 +70,17 @@ public class EnemyBehavior : MonoBehaviour
         timeSincePath = 0f;
         p = seeker.StartPath(transform.position, target.position);
         currentWaypoint = 0;
+        pathCompleted = false;
+    }
+
+    //overload method for a vector3
+    void GeneratePath(Vector3 target)
+    {
+        //generate a path
+        timeSincePath = 0f;
+        p = seeker.StartPath(transform.position, target);
+        currentWaypoint = 0;
+        pathCompleted = false;
     }
 
     //applies a force pushing the rigidbody along the path
@@ -92,24 +113,43 @@ public class EnemyBehavior : MonoBehaviour
     
     void Update()
     {
+        if (prevState != state) p = null;
         //increment timers
         timeSincePath += Time.deltaTime;
 
         //the enemy state machine
         switch (state)
         {
-            case EnemyState.Passive:
+            case EnemyState.Start:
+                break;
+            case EnemyState.Prowl:
+                if (p == null || pathCompleted == true)
+                {
+                    Vector3 point = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);
+                    GeneratePath(point);
+                    Debug.Log("yes");
+                }
+                FollowPath(fleeSpeed * Time.deltaTime);
+                break;
+            case EnemyState.Hunt:
+                if (timeSincePath > 0.3f) GeneratePath(player);
+                FollowPath(huntSpeed * Time.deltaTime);
                 break;
             case EnemyState.Chase:
-                //generates a path towards the chase target (by default, the player)
-                //does not generate a path if one has been generated recently
-                if(timeSincePath>0.3f) GeneratePath(chaseTarget);
-                //move along the path at chasing speed
+                if(timeSincePath>0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
                 break;
-            case EnemyState.Attack:
+            case EnemyState.Kill:
+                if (timeSincePath > 0.3f) GeneratePath(player);
+                FollowPath(chaseSpeed * Time.deltaTime);
+                break;
+            case EnemyState.Flee:
+                if (p == null || pathCompleted == true) GeneratePath(spawnPoint);
+                FollowPath(fleeSpeed * Time.deltaTime);
                 break;
         }
+
+        prevState = state;
     }
 
     private void FixedUpdate()

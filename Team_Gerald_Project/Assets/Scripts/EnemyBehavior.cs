@@ -53,6 +53,7 @@ public class EnemyBehavior : MonoBehaviour
     private Vector3 targetPoint;
 
     private EnemyState prevState;
+    private SafeZoneManager safeZone;
     
     
     void Start()
@@ -61,6 +62,7 @@ public class EnemyBehavior : MonoBehaviour
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         light = GetComponentInChildren<Light2D>();
+        safeZone = GameObject.FindWithTag("SafeZone").GetComponent<SafeZoneManager>();
         //auto-assign the target to the player
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
@@ -128,10 +130,13 @@ public class EnemyBehavior : MonoBehaviour
         timeSincePath += Time.deltaTime;
 
         //the enemy state machine
+        //transitions that occur from multiple states
+        if ((state != EnemyState.Start && state != EnemyState.Flee) && safeZone.playerIsSafe) state = EnemyState.Flee;
         switch (state)
         {
             case EnemyState.Start:
                 if (light.enabled == true) light.enabled = false;
+                if (!safeZone.playerIsSafe) state = EnemyState.Prowl;
                 break;
             case EnemyState.Prowl:
                 if (p == null || pathCompleted == true)
@@ -161,6 +166,7 @@ public class EnemyBehavior : MonoBehaviour
                 if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
+                if (pathCompleted) state = EnemyState.Start;
                 break;
         }
 

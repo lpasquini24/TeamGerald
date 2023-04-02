@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using UnityEngine.Rendering.Universal;
 
 //this script requires these components on the enemy to function
 [RequireComponent(typeof(Rigidbody2D))]
@@ -35,6 +36,7 @@ public class EnemyBehavior : MonoBehaviour
 
     private Seeker seeker;
     private Rigidbody2D rb;
+    private Light2D light;
 
     //private variables
 
@@ -48,14 +50,19 @@ public class EnemyBehavior : MonoBehaviour
     //stores the time since a path has been generated
     private float timeSincePath;
     private Vector3 spawnPoint;
-    private EnemyState prevState;
+    private Vector3 targetPoint;
 
+    private EnemyState prevState;
+    private SafeZoneManager safeZone;
+    
     
     void Start()
     {
         //get the components from our enemy
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        light = GetComponentInChildren<Light2D>();
+        safeZone = GameObject.FindWithTag("SafeZone").GetComponent<SafeZoneManager>();
         //auto-assign the target to the player
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
@@ -86,11 +93,11 @@ public class EnemyBehavior : MonoBehaviour
     //applies a force pushing the rigidbody along the path
     void FollowPath(float amount)
     {
-        
+        Debug.Log(currentWaypoint);
         //check if path is null
-        if (p == null) return;
+        if (p == null || !p.IsDone()) return;
         //check if the path is completed
-        if(currentWaypoint == p.vectorPath.Count)
+        if(currentWaypoint == p.vectorPath.Count-1)
         {
             pathCompleted = true;
             return;
@@ -113,43 +120,57 @@ public class EnemyBehavior : MonoBehaviour
     
     void Update()
     {
-        if (prevState != state) p = null;
+        Debug.Log(prevState);
+        if (prevState != state)
+        {
+            prevState = state;
+            p = null;
+        }
         //increment timers
         timeSincePath += Time.deltaTime;
 
         //the enemy state machine
+        //transitions that occur from multiple states
+        if ((state != EnemyState.Start && state != EnemyState.Flee) && safeZone.playerIsSafe) state = EnemyState.Flee;
         switch (state)
         {
             case EnemyState.Start:
+                if (light.enabled == true) light.enabled = false;
+                if (!safeZone.playerIsSafe) state = EnemyState.Prowl;
                 break;
             case EnemyState.Prowl:
                 if (p == null || pathCompleted == true)
                 {
-                    Vector3 point = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);
-                    GeneratePath(point);
-                    Debug.Log("yes");
+                    targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);   
                 }
-                FollowPath(fleeSpeed * Time.deltaTime);
+                if (timeSincePath > 0.3f) GeneratePath(targetPoint);
+                FollowPath(prowlSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
                 break;
             case EnemyState.Hunt:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
                 break;
             case EnemyState.Chase:
-                if(timeSincePath>0.3f) GeneratePath(player);
+                if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
+                if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Kill:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
+                if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Flee:
-                if (p == null || pathCompleted == true) GeneratePath(spawnPoint);
-                FollowPath(fleeSpeed * Time.deltaTime);
+                if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
+                FollowPath(prowlSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
+                if (pathCompleted) state = EnemyState.Start;
                 break;
         }
 
-        prevState = state;
+        
     }
 
     private void FixedUpdate()

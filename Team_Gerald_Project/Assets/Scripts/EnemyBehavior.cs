@@ -48,8 +48,10 @@ public class EnemyBehavior : MonoBehaviour
     //stores the time since a path has been generated
     private float timeSincePath;
     private Vector3 spawnPoint;
-    private EnemyState prevState;
+    private Vector3 targetPoint;
 
+    private EnemyState prevState;
+    
     
     void Start()
     {
@@ -86,11 +88,11 @@ public class EnemyBehavior : MonoBehaviour
     //applies a force pushing the rigidbody along the path
     void FollowPath(float amount)
     {
-        
+        Debug.Log(currentWaypoint);
         //check if path is null
-        if (p == null) return;
+        if (p == null || !p.IsDone()) return;
         //check if the path is completed
-        if(currentWaypoint == p.vectorPath.Count)
+        if(currentWaypoint == p.vectorPath.Count-1)
         {
             pathCompleted = true;
             return;
@@ -113,7 +115,12 @@ public class EnemyBehavior : MonoBehaviour
     
     void Update()
     {
-        if (prevState != state) p = null;
+        Debug.Log(prevState);
+        if (prevState != state)
+        {
+            prevState = state;
+            p = null;
+        }
         //increment timers
         timeSincePath += Time.deltaTime;
 
@@ -125,18 +132,17 @@ public class EnemyBehavior : MonoBehaviour
             case EnemyState.Prowl:
                 if (p == null || pathCompleted == true)
                 {
-                    Vector3 point = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);
-                    GeneratePath(point);
-                    Debug.Log("yes");
+                    targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);   
                 }
-                FollowPath(fleeSpeed * Time.deltaTime);
+                if (timeSincePath > 0.3f) GeneratePath(targetPoint);
+                FollowPath(prowlSpeed * Time.deltaTime);
                 break;
             case EnemyState.Hunt:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
                 break;
             case EnemyState.Chase:
-                if(timeSincePath>0.3f) GeneratePath(player);
+                if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
                 break;
             case EnemyState.Kill:
@@ -144,12 +150,12 @@ public class EnemyBehavior : MonoBehaviour
                 FollowPath(chaseSpeed * Time.deltaTime);
                 break;
             case EnemyState.Flee:
-                if (p == null || pathCompleted == true) GeneratePath(spawnPoint);
-                FollowPath(fleeSpeed * Time.deltaTime);
+                if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
+                FollowPath(prowlSpeed * Time.deltaTime);
                 break;
         }
 
-        prevState = state;
+        
     }
 
     private void FixedUpdate()

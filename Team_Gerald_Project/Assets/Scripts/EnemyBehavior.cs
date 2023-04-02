@@ -23,6 +23,8 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] Transform player;
     //the target that the enemy will follow when prowling
     [SerializeField] float prowlRadius;
+    //the distance from the player at which the enemy becomes enraged
+    [SerializeField] float rageDistance;
     //the speed at which the enemy will prowl around
     [SerializeField] float prowlSpeed;
     //the speed at which the enemy will hunt the player
@@ -132,6 +134,7 @@ public class EnemyBehavior : MonoBehaviour
         //the enemy state machine
         //transitions that occur from multiple states
         if ((state != EnemyState.Start && state != EnemyState.Flee) && safeZone.playerIsSafe) state = EnemyState.Flee;
+        if ((state != EnemyState.Chase && state != EnemyState.Kill) && Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
         switch (state)
         {
             case EnemyState.Start:

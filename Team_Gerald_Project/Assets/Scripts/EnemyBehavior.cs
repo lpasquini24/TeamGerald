@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using UnityEngine.Rendering.Universal;
 
 //this script requires these components on the enemy to function
 [RequireComponent(typeof(Rigidbody2D))]
@@ -35,6 +36,7 @@ public class EnemyBehavior : MonoBehaviour
 
     private Seeker seeker;
     private Rigidbody2D rb;
+    private Light2D light;
 
     //private variables
 
@@ -58,6 +60,7 @@ public class EnemyBehavior : MonoBehaviour
         //get the components from our enemy
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        light = GetComponentInChildren<Light2D>();
         //auto-assign the target to the player
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
@@ -128,6 +131,7 @@ public class EnemyBehavior : MonoBehaviour
         switch (state)
         {
             case EnemyState.Start:
+                if (light.enabled == true) light.enabled = false;
                 break;
             case EnemyState.Prowl:
                 if (p == null || pathCompleted == true)
@@ -136,22 +140,27 @@ public class EnemyBehavior : MonoBehaviour
                 }
                 if (timeSincePath > 0.3f) GeneratePath(targetPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
                 break;
             case EnemyState.Hunt:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
                 break;
             case EnemyState.Chase:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
+                if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Kill:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(chaseSpeed * Time.deltaTime);
+                if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Flee:
                 if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
+                if (light.enabled == true) light.enabled = false;
                 break;
         }
 

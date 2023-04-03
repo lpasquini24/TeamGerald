@@ -416,7 +416,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.5, z: 0}
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -858,7 +858,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.49999994, z: 0}
@@ -1030,7 +1030,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -1497,7 +1497,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -1636,7 +1636,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -1947,7 +1947,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -2164,7 +2164,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.5, z: 0}
@@ -2447,7 +2447,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.5000001, z: 0}
@@ -2466,7 +2466,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1187064404, guid: aaca81d4614fefd44b027b8d768016cd, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1187064406, guid: aaca81d4614fefd44b027b8d768016cd, type: 3}
       propertyPath: m_ApplyToSortingLayers.Array.size
@@ -3385,7 +3385,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.5, z: 0}
@@ -3536,7 +3536,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -4451,7 +4451,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -4911,7 +4911,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.49999997, z: 0}
@@ -5241,7 +5241,7 @@ MonoBehaviour:
   nextWaypointDistance: 0.3
   player: {fileID: 0}
   prowlRadius: 5
-  rageDistance: 2.5
+  rageDistance: 2
   prowlSpeed: 140
   huntSpeed: 160
   chaseSpeed: 185
@@ -5251,7 +5251,7 @@ MonoBehaviour:
   aggressionHuntThreshold: 20
   aggressionChaseThreshold: 60
   spottedTimeChaseThreshold: 1
-  spottedTimeDecreaseRate: 0.02
+  spottedTimeDecreaseRate: 0.1
   state: 0
   inBeam: 0
   lookForPlayer:
@@ -5834,7 +5834,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.49999997, z: 0}
@@ -5895,7 +5895,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -6575,7 +6575,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.5, z: 0}
@@ -6800,7 +6800,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -7171,7 +7171,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.49999997, z: 0}
@@ -7435,7 +7435,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.5, y: 0.49999997, z: 0}
@@ -8275,7 +8275,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -8414,7 +8414,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}
@@ -8553,7 +8553,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 00000000
   m_ShapePath:
   - {x: -0.49999997, y: 0.5000005, z: 0}

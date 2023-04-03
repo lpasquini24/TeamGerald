@@ -134,7 +134,7 @@ public class EnemyBehavior : MonoBehaviour
         //the enemy state machine
         //transitions that occur from multiple states
         if ((state != EnemyState.Start && state != EnemyState.Flee) && safeZone.playerIsSafe) state = EnemyState.Flee;
-        if ((state != EnemyState.Chase && state != EnemyState.Kill) && Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
+       
         switch (state)
         {
             case EnemyState.Start:
@@ -149,11 +149,13 @@ public class EnemyBehavior : MonoBehaviour
                 if (timeSincePath > 0.3f) GeneratePath(targetPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
+                if(Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
                 break;
             case EnemyState.Hunt:
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
+                if (Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
                 break;
             case EnemyState.Chase:
                 if (timeSincePath > 0.3f) GeneratePath(player);

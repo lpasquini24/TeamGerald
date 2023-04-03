@@ -7,7 +7,7 @@ public class FlashlightBehavior : MonoBehaviour
 {
     //references
 
-     private Light2D light;
+    public Light2D light;
     [SerializeField] PlayerMovement playerMovement;
 
     //variables
@@ -26,6 +26,7 @@ public class FlashlightBehavior : MonoBehaviour
     [SerializeField] private float flickerLength = 0.1f;
     [SerializeField] private float minFlickerDelay = 0.2f;
     [SerializeField] private float maxFlickerDelay = 1f;
+    public bool isActive = true;
 
     private Coroutine co;
     private float intensity = 1f;
@@ -42,12 +43,14 @@ public class FlashlightBehavior : MonoBehaviour
         if (Input.GetButton("Charge"))
         {
             light.enabled = false;
+            isActive = false;
             playerMovement.canMove = false;
             power = Mathf.Clamp(power + (powerChargeSpeed * Time.deltaTime), 0, 100);   
         }
         else
         {
             light.enabled = (power > 0);
+            isActive = (power > 0);
             playerMovement.canMove = true;
             power = Mathf.Clamp(power - (powerLossSpeed * Time.deltaTime), 0, 100);
         }

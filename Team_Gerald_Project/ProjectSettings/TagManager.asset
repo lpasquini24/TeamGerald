@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Battery
   - SafeZone
+  - FlashlightBeam
   layers:
   - Default
   - TransparentFX

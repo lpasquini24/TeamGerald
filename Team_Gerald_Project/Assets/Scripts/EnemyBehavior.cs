@@ -12,7 +12,7 @@ public class EnemyBehavior : MonoBehaviour
     //enums
 
     //manages the state that the enemy is currently in
-    private enum EnemyState { Start, Prowl, Hunt, Chase, Kill, Flee };
+    private enum EnemyState { Start, Prowl, Hunt, Chase, Kill, Flee, Freeze };
 
     //serialized parameters
 
@@ -31,9 +31,21 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] float huntSpeed;
     //the speed at which the enemy will chase the player
     [SerializeField] float chaseSpeed;
+    //this is a lil private variable for the speed increase while chasing
+    [SerializeField] private float variableChaseSpeed;
     //the speed at which the enemy will flee
     [SerializeField] float fleeSpeed;
-
+    //the passive aggression increase rate
+    [SerializeField] float aggressionIncreaseRate;
+    //the aggression threshold for hunting
+    [SerializeField] float aggressionHuntThreshold;
+    //the aggression threshold for chasing
+    [SerializeField] float aggressionChaseThreshold;
+    //the time the enemy can be in the flashlight beam before chasing
+    [SerializeField] float spottedTimeChaseThreshold;
+    //the passive decrease rate of the 'spottedtime' metere
+    [SerializeField] float spottedTimeDecreaseRate;
+   
     //references
 
     private Seeker seeker;
@@ -53,9 +65,17 @@ public class EnemyBehavior : MonoBehaviour
     private float timeSincePath;
     private Vector3 spawnPoint;
     private Vector3 targetPoint;
-
+    //if the monster is within the player's flashlight beam
+    public bool inBeam;
     private EnemyState prevState;
     private SafeZoneManager safeZone;
+    public LayerMask lookForPlayer;
+
+    //increases over time, makes the monster more aggressive
+    [SerializeField] private float aggression = 0;
+    //manages monster behavior when within the player's flashlight beam
+    [SerializeField] private float spottedTime = 0;
+
     
     
     void Start()
@@ -95,7 +115,6 @@ public class EnemyBehavior : MonoBehaviour
     //applies a force pushing the rigidbody along the path
     void FollowPath(float amount)
     {
-        Debug.Log(currentWaypoint);
         //check if path is null
         if (p == null || !p.IsDone()) return;
         //check if the path is completed
@@ -122,10 +141,10 @@ public class EnemyBehavior : MonoBehaviour
     
     void Update()
     {
-        Debug.Log(prevState);
         if (prevState != state)
         {
             prevState = state;
+            variableChaseSpeed = chaseSpeed;
             p = null;
         }
         //increment timers
@@ -134,14 +153,17 @@ public class EnemyBehavior : MonoBehaviour
         //the enemy state machine
         //transitions that occur from multiple states
         if ((state != EnemyState.Start && state != EnemyState.Flee) && safeZone.playerIsSafe) state = EnemyState.Flee;
-       
+        if (state != EnemyState.Freeze) spottedTime = Mathf.Clamp(spottedTime - (spottedTimeDecreaseRate * Time.deltaTime), 0, Mathf.Infinity);
+
         switch (state)
         {
             case EnemyState.Start:
+                aggression = 0;
                 if (light.enabled == true) light.enabled = false;
                 if (!safeZone.playerIsSafe) state = EnemyState.Prowl;
                 break;
             case EnemyState.Prowl:
+                aggression += aggressionIncreaseRate * Time.deltaTime;
                 if (p == null || pathCompleted == true)
                 {
                     targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);   
@@ -149,29 +171,50 @@ public class EnemyBehavior : MonoBehaviour
                 if (timeSincePath > 0.3f) GeneratePath(targetPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
+                //enrage code
                 if(Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
+                if (aggression > aggressionHuntThreshold) state = EnemyState.Hunt;
+                //freeze if the player is lookin at ya
+                if (isSeenByBeam()) state = EnemyState.Freeze;
                 break;
             case EnemyState.Hunt:
+                aggression += aggressionIncreaseRate * Time.deltaTime;
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
+                //enrage code
                 if (Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
+                if (aggression > aggressionChaseThreshold) state = EnemyState.Chase;
+                //freeze if player lookin at ya
+                if (isSeenByBeam()) state = EnemyState.Freeze;
                 break;
             case EnemyState.Chase:
                 if (timeSincePath > 0.3f) GeneratePath(player);
-                FollowPath(chaseSpeed * Time.deltaTime);
+                FollowPath(variableChaseSpeed * Time.deltaTime);
+                variableChaseSpeed += 0.7f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Kill:
                 if (timeSincePath > 0.3f) GeneratePath(player);
-                FollowPath(chaseSpeed * Time.deltaTime);
+                FollowPath(variableChaseSpeed * Time.deltaTime);
+                variableChaseSpeed += 1f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
                 break;
             case EnemyState.Flee:
+                aggression = 0;
                 if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
                 if (pathCompleted) state = EnemyState.Start;
+                break;
+            case EnemyState.Freeze:
+                if (light.enabled == false) light.enabled = true;
+                if (!isSeenByBeam())
+                {
+                    if (spottedTime > 0.5 * spottedTimeChaseThreshold) state = EnemyState.Hunt; else state = EnemyState.Prowl;
+                }
+                if (spottedTime > spottedTimeChaseThreshold) state = EnemyState.Chase;
+                spottedTime += Time.deltaTime;
                 break;
         }
 
@@ -182,5 +225,23 @@ public class EnemyBehavior : MonoBehaviour
     {
 
     }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("FlashlightBeam")) inBeam = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("FlashlightBeam")) inBeam = false;
+    }
+
+    private bool isSeenByBeam()
+    {
+        FlashlightBehavior flashlight = player.gameObject.GetComponentInChildren<FlashlightBehavior>();
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position), flashlight.light.pointLightOuterRadius - 2f, lookForPlayer);
+        return (inBeam && hit.collider != null && hit.collider.gameObject.CompareTag("Player") && flashlight.isActive);
+    }
+
 
 }

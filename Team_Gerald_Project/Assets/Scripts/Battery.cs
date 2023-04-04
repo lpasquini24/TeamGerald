@@ -16,10 +16,11 @@ public class Battery : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            PlayerMovement.batteryCount += 1;
             Destroy(gameObject);
         }
     }

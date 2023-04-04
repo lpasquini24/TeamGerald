@@ -17,7 +17,7 @@ public class Generator : MonoBehaviour
     void Update()
     {
         timePassed += Time.deltaTime;
-        if (timePassed > 10f && power!=0f)
+        if (timePassed > 10f)
         {
             timePassed = 0;
             power -= 10;

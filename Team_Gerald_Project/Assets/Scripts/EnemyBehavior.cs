@@ -187,6 +187,8 @@ public class EnemyBehavior : MonoBehaviour
                 if (aggression > aggressionChaseThreshold) state = EnemyState.Chase;
                 //freeze if player lookin at ya
                 if (isSeenByBeam()) state = EnemyState.Freeze;
+                //go back to prowling, provided its not aggressive
+                if (spottedTime == 0 && aggression < aggressionHuntThreshold) state = EnemyState.Prowl;
                 break;
             case EnemyState.Chase:
                 if (timeSincePath > 0.3f) GeneratePath(player);

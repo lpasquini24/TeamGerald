@@ -5,6 +5,7 @@ using UnityEngine;
 public class Generator : MonoBehaviour
 {
     public int power;
+    public float timePassed = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -15,7 +16,12 @@ public class Generator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        timePassed += Time.deltaTime;
+        if (timePassed > 10f)
+        {
+            timePassed = 0;
+            power -= 10;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -45,12 +45,5 @@ public class PlayerMovement : MonoBehaviour
         if (canMove) rb.velocity = NewVelocity;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Battery"))
-        {
-            collision.gameObject.SetActive(false);
-            batteryCount += 1;
-        }
-    }
+
 }

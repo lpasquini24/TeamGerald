@@ -12,7 +12,7 @@ public class EnemyBehavior : MonoBehaviour
     //enums
 
     //manages the state that the enemy is currently in
-    private enum EnemyState { Start, Prowl, Hunt, Chase, Kill, Flee, Freeze };
+    private enum EnemyState { Start, Prowl, Hunt, Flee, Chase, Kill, Freeze };
 
     //serialized parameters
 
@@ -51,6 +51,7 @@ public class EnemyBehavior : MonoBehaviour
     private Seeker seeker;
     private Rigidbody2D rb;
     private Light2D light;
+    private Animator anim;
 
     //private variables
 
@@ -85,6 +86,7 @@ public class EnemyBehavior : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         light = GetComponentInChildren<Light2D>();
         safeZone = GameObject.FindWithTag("SafeZone").GetComponent<SafeZoneManager>();
+        anim = GetComponent<Animator>();
         //auto-assign the target to the player
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
@@ -141,6 +143,7 @@ public class EnemyBehavior : MonoBehaviour
     
     void Update()
     {
+        anim.SetInteger("State", (int) state);
         if (prevState != state)
         {
             prevState = state;

@@ -66,7 +66,7 @@ public class EnemyBehavior : MonoBehaviour
     private Vector3 spawnPoint;
     private Vector3 targetPoint;
     //if the monster is within the player's flashlight beam
-    public bool inBeam;
+    [SerializeField] public bool inBeam;
     private EnemyState prevState;
     private SafeZoneManager safeZone;
     public LayerMask lookForPlayer;
@@ -241,6 +241,7 @@ public class EnemyBehavior : MonoBehaviour
     private bool isSeenByBeam()
     {
         FlashlightBehavior flashlight = player.gameObject.GetComponentInChildren<FlashlightBehavior>();
+        
         RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position), flashlight.light.pointLightOuterRadius - 2f, lookForPlayer);
         return (inBeam && hit.collider != null && hit.collider.gameObject.CompareTag("Player") && flashlight.isActive);
     }

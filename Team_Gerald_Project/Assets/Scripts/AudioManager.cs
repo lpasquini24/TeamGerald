@@ -59,7 +59,7 @@ public class AudioManager : MonoBehaviour
     }
     void Start()
     {
-        
+        Play("AmbientWooshing");
         
     }
 
@@ -93,15 +93,16 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator FadeOut(Sound s)
     {
-        while (s.source.volume > 0.3f)
+        while (s.source.volume > 0.1f)
         {
-            Debug.Log("inloop");
-            s.source.volume -= 0.1f;
-            yield return null;
+            Debug.Log(s.source.volume);
+            s.source.volume -= 0.05f * s.volume;
+            yield return new WaitForSeconds(0.05f);
         }
-        Debug.Log("outloop");
+    
         s.fade = null;
         s.source.Stop();
+        s.source.volume = s.volume;
         yield break;
     }
 

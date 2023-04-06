@@ -7,6 +7,7 @@ TagManager:
   - Battery
   - SafeZone
   - FlashlightBeam
+  - AudioManager
   layers:
   - Default
   - TransparentFX

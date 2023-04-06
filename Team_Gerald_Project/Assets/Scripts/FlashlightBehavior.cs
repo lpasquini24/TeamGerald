@@ -39,13 +39,23 @@ public class FlashlightBehavior : MonoBehaviour
     
     void Update()
     {
+        if (Input.GetButtonDown("Charge"))
+        {
+            AudioManager.sharedInstance.Play("FlashlightWind");
+        }
+        if (Input.GetButtonUp("Charge"))
+        {
+            Debug.Log("Called");
+            AudioManager.sharedInstance.Stop("FlashlightWind");
+        }
         //determine if the flashlight is being charged or not
         if (Input.GetButton("Charge"))
         {
             light.enabled = false;
             isActive = false;
             playerMovement.canMove = false;
-            power = Mathf.Clamp(power + (powerChargeSpeed * Time.deltaTime), 0, 100);   
+            power = Mathf.Clamp(power + (powerChargeSpeed * Time.deltaTime), 0, 100);
+            if (power == 100f) Debug.Log("Called2"); //AudioManager.sharedInstance.Stop("FlashlightWind");
         }
         else
         {

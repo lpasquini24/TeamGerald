@@ -154,6 +154,7 @@ public class EnemyBehavior : MonoBehaviour
         if (prevState != state)
         {
             if (state == EnemyState.Chase) AudioManager.sharedInstance.Play("Growl");
+            
             prevState = state;
             variableChaseSpeed = chaseSpeed;
             p = null;
@@ -171,11 +172,13 @@ public class EnemyBehavior : MonoBehaviour
         {
             case EnemyState.Start:
                 aggression = 0;
+                if (source.isPlaying) source.Stop();
                 if (light.enabled == true) light.enabled = false;
                 if (!safeZone.playerIsSafe) state = EnemyState.Prowl;
                 break;
             case EnemyState.Prowl:
                 aggression += aggressionIncreaseRate * Time.deltaTime;
+                if (source.isPlaying) source.Stop();
                 if (p == null || pathCompleted == true)
                 {
                     targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);   
@@ -193,6 +196,7 @@ public class EnemyBehavior : MonoBehaviour
                 aggression += aggressionIncreaseRate * Time.deltaTime;
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(huntSpeed * Time.deltaTime);
+                if (source.isPlaying) source.Stop();
                 if (light.enabled == true) light.enabled = false;
                 //enrage code
                 if (Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
@@ -204,6 +208,7 @@ public class EnemyBehavior : MonoBehaviour
                 break;
             case EnemyState.Chase:
                 if (!source.isPlaying) source.Play();
+                source.volume = 1;
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(variableChaseSpeed * Time.deltaTime);
                 variableChaseSpeed += 0.7f * Time.deltaTime;
@@ -215,8 +220,10 @@ public class EnemyBehavior : MonoBehaviour
                 variableChaseSpeed += 1f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
                 if (!source.isPlaying) source.Play();
+                source.volume = 1;
                 break;
             case EnemyState.Flee:
+                if (source.isPlaying) source.Stop();
                 aggression = 0;
                 if (timeSincePath > 0.3f) GeneratePath(spawnPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
@@ -224,6 +231,8 @@ public class EnemyBehavior : MonoBehaviour
                 if (pathCompleted) state = EnemyState.Start;
                 break;
             case EnemyState.Freeze:
+                if (!source.isPlaying) source.Play();
+                source.volume = Mathf.Lerp(0f,0.6f,spottedTime);
                 if (light.enabled == false) light.enabled = true;
                 if (!isSeenByBeam())
                 {

@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Generator : MonoBehaviour
 {
-    public int power;
-    public float timePassed = 0f;
-    public float waitTime = 10f;
+    public float power;
+    [SerializeField] private float batteryAmount = 10f;
+    [SerializeField] private float lossRate = 1f;
+    public Slider slider;
+    //public float timePassed = 0f;
+    //public float waitTime = 10f;
 
     // Start is called before the first frame update
     void Start()
@@ -17,15 +21,13 @@ public class Generator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(power != 0)
+        slider.value = power/100f;
+        if(power > 0)
         {
-            timePassed += Time.deltaTime;
+            power -= lossRate * Time.deltaTime;
+            if (power < 0f) power = 0f;
         }
-        if (timePassed > waitTime && power != 0)
-        {
-            timePassed = 0;
-            power -= 10;
-        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -35,7 +37,7 @@ public class Generator : MonoBehaviour
             while(power != 100 && PlayerMovement.batteryCount > 0)
             {
                 PlayerMovement.batteryCount -= 1;
-                power += 10;
+                power += batteryAmount;
             }
         }
     }

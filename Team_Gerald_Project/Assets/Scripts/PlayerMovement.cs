@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     public bool canMove = true;
     static public int batteryCount;
-
+    [SerializeField] TextMeshProUGUI batteryCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,8 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { 
+    {
+        batteryCounter.text = batteryCount.ToString();
         Vector2 NewVelocity = rb.velocity;
         NewVelocity.x += Input.GetAxisRaw("Horizontal") * Acceleration* Time.deltaTime;
         //if (rb.velocity.x > MaxSpeed)

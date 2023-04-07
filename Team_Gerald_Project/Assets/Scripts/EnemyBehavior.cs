@@ -45,6 +45,8 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] float spottedTimeChaseThreshold;
     //the passive decrease rate of the 'spottedtime' metere
     [SerializeField] float spottedTimeDecreaseRate;
+    //the radius in which the bite will take place
+    [SerializeField] float biteRadius;
 
  
 
@@ -73,6 +75,7 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] public bool inBeam;
     private EnemyState prevState;
     private SafeZoneManager safeZone;
+    public LayerMask playerMask;
     public LayerMask lookForPlayer;
 
     //increases over time, makes the monster more aggressive
@@ -213,6 +216,12 @@ public class EnemyBehavior : MonoBehaviour
                 FollowPath(variableChaseSpeed * Time.deltaTime);
                 variableChaseSpeed += 0.7f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
+                //possibly attack?
+                if (Vector3.Distance(player.position, transform.position) < biteRadius)
+                {
+                    Debug.Log("Bite");
+                    anim.SetTrigger("Bite");
+                }
                 break;
             case EnemyState.Kill:
                 if (timeSincePath > 0.3f) GeneratePath(player);
@@ -267,6 +276,14 @@ public class EnemyBehavior : MonoBehaviour
         
         RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position), flashlight.light.pointLightOuterRadius - 2f, lookForPlayer);
         return (inBeam && hit.collider != null && hit.collider.gameObject.CompareTag("Player") && flashlight.isActive);
+    }
+
+    private void Bite()
+    {
+        if(System.Array.Find(Physics.OverlapSphere(transform.position, biteRadius, playerMask), col => col.gameObject.transform.Equals(player)))
+        {
+            Destroy(player);
+        }
     }
 
 

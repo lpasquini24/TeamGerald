@@ -45,8 +45,10 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] float spottedTimeChaseThreshold;
     //the passive decrease rate of the 'spottedtime' metere
     [SerializeField] float spottedTimeDecreaseRate;
+    //the radius in which the bite will take place
+    [SerializeField] float biteRadius;
 
- 
+
 
     //references
 
@@ -73,6 +75,7 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] public bool inBeam;
     private EnemyState prevState;
     private SafeZoneManager safeZone;
+    public LayerMask playerMask;
     public LayerMask lookForPlayer;
 
     //increases over time, makes the monster more aggressive
@@ -80,10 +83,10 @@ public class EnemyBehavior : MonoBehaviour
     //manages monster behavior when within the player's flashlight beam
     [SerializeField] private float spottedTime = 0;
 
-    
 
-    
-    
+
+
+
     void Start()
     {
         //get the components from our enemy
@@ -97,8 +100,8 @@ public class EnemyBehavior : MonoBehaviour
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
         spawnPoint = transform.position;
-        
-        
+
+
     }
 
     //creates a path and stores the value in p
@@ -127,7 +130,7 @@ public class EnemyBehavior : MonoBehaviour
         //check if path is null
         if (p == null || !p.IsDone()) return;
         //check if the path is completed
-        if(currentWaypoint == p.vectorPath.Count-1)
+        if (currentWaypoint == p.vectorPath.Count - 1)
         {
             pathCompleted = true;
             return;
@@ -137,28 +140,28 @@ public class EnemyBehavior : MonoBehaviour
             pathCompleted = false;
         }
         //find the direction to move in
-        Vector2 direction = ((Vector2)p.vectorPath[currentWaypoint+1] - rb.position).normalized;
+        Vector2 direction = ((Vector2)p.vectorPath[currentWaypoint + 1] - rb.position).normalized;
         //apply a force in that direction
         rb.AddForce(amount * direction);
-        
+
         //check if we've reached the next waypoint
-        if(Vector2.Distance(rb.position, (Vector2) p.vectorPath[currentWaypoint+1]) < nextWaypointDistance)
+        if (Vector2.Distance(rb.position, (Vector2)p.vectorPath[currentWaypoint + 1]) < nextWaypointDistance)
         {
             currentWaypoint++;
         }
     }
-    
+
     void Update()
     {
-        anim.SetInteger("State", (int) state);
+        anim.SetInteger("State", (int)state);
         if (prevState != state)
         {
             if (state == EnemyState.Chase) AudioManager.sharedInstance.Play("Growl");
-            
+
             prevState = state;
             variableChaseSpeed = chaseSpeed;
             p = null;
-            
+
         }
         //increment timers
         timeSincePath += Time.deltaTime;
@@ -181,13 +184,13 @@ public class EnemyBehavior : MonoBehaviour
                 if (source.isPlaying) source.Stop();
                 if (p == null || pathCompleted == true)
                 {
-                    targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);   
+                    targetPoint = player.position + new Vector3(Random.Range(-prowlRadius, prowlRadius), Random.Range(-prowlRadius, prowlRadius), 0f);
                 }
                 if (timeSincePath > 0.3f) GeneratePath(targetPoint);
                 FollowPath(prowlSpeed * Time.deltaTime);
                 if (light.enabled == true) light.enabled = false;
                 //enrage code
-                if(Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
+                if (Vector3.Distance(player.position, transform.position) < rageDistance) state = EnemyState.Chase;
                 if (aggression > aggressionHuntThreshold) state = EnemyState.Hunt;
                 //freeze if the player is lookin at ya
                 if (isSeenByBeam()) state = EnemyState.Freeze;
@@ -213,6 +216,11 @@ public class EnemyBehavior : MonoBehaviour
                 FollowPath(variableChaseSpeed * Time.deltaTime);
                 variableChaseSpeed += 0.7f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
+                //possibly attack?
+                if (Vector3.Distance(player.position, transform.position) < biteRadius)
+                {
+                    anim.SetTrigger("Bite");
+                }
                 break;
             case EnemyState.Kill:
                 if (timeSincePath > 0.3f) GeneratePath(player);
@@ -232,7 +240,7 @@ public class EnemyBehavior : MonoBehaviour
                 break;
             case EnemyState.Freeze:
                 if (!source.isPlaying) source.Play();
-                source.volume = Mathf.Lerp(0f,0.6f,spottedTime);
+                source.volume = Mathf.Lerp(0f, 0.6f, spottedTime);
                 if (light.enabled == false) light.enabled = true;
                 if (!isSeenByBeam())
                 {
@@ -243,7 +251,7 @@ public class EnemyBehavior : MonoBehaviour
                 break;
         }
 
-        
+
     }
 
     private void FixedUpdate()
@@ -264,10 +272,16 @@ public class EnemyBehavior : MonoBehaviour
     private bool isSeenByBeam()
     {
         FlashlightBehavior flashlight = player.gameObject.GetComponentInChildren<FlashlightBehavior>();
-        
+
         RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position), flashlight.light.pointLightOuterRadius - 2f, lookForPlayer);
         return (inBeam && hit.collider != null && hit.collider.gameObject.CompareTag("Player") && flashlight.isActive);
     }
 
+    private void Bite()
+    {
+        Collider2D col = Physics2D.OverlapCircle((Vector2) transform.position, biteRadius, playerMask);
+        if (col.CompareTag("Player")) Destroy(player.gameObject);
+
+    }
 
 }

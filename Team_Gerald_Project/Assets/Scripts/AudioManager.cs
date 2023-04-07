@@ -78,7 +78,6 @@ public class AudioManager : MonoBehaviour
         }
         else if(s.fade == null)
         {
-            Debug.Log("Starting");
             s.fade = StartCoroutine("FadeOut", s);
         }
     }
@@ -95,7 +94,6 @@ public class AudioManager : MonoBehaviour
     {
         while (s.source.volume > 0.1f)
         {
-            Debug.Log(s.source.volume);
             s.source.volume -= 0.05f * s.volume;
             yield return new WaitForSeconds(0.05f);
         }

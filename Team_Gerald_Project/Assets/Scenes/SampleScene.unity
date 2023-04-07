@@ -9079,7 +9079,7 @@ MonoBehaviour:
   nextWaypointDistance: 0.3
   player: {fileID: 0}
   prowlRadius: 5
-  rageDistance: 2
+  rageDistance: 2.7
   prowlSpeed: 100
   huntSpeed: 150
   chaseSpeed: 185
@@ -9090,7 +9090,7 @@ MonoBehaviour:
   aggressionChaseThreshold: 80
   spottedTimeChaseThreshold: 1.4
   spottedTimeDecreaseRate: 0.1
-  biteRadius: 2.5
+  biteRadius: 1.8
   state: 0
   inBeam: 0
   playerMask:

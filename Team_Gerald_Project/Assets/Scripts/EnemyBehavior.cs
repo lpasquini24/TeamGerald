@@ -45,13 +45,16 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] float spottedTimeChaseThreshold;
     //the passive decrease rate of the 'spottedtime' metere
     [SerializeField] float spottedTimeDecreaseRate;
-   
+
+ 
+
     //references
 
     private Seeker seeker;
     private Rigidbody2D rb;
     private Light2D light;
     private Animator anim;
+    private AudioSource source;
 
     //private variables
 
@@ -78,6 +81,8 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] private float spottedTime = 0;
 
     
+
+    
     
     void Start()
     {
@@ -87,10 +92,12 @@ public class EnemyBehavior : MonoBehaviour
         light = GetComponentInChildren<Light2D>();
         safeZone = GameObject.FindWithTag("SafeZone").GetComponent<SafeZoneManager>();
         anim = GetComponent<Animator>();
+        source = GetComponent<AudioSource>();
         //auto-assign the target to the player
         if (player == null) player = GameObject.FindWithTag("Player").transform;
         //autoassign the spawnpoint
         spawnPoint = transform.position;
+        
         
     }
 
@@ -146,9 +153,11 @@ public class EnemyBehavior : MonoBehaviour
         anim.SetInteger("State", (int) state);
         if (prevState != state)
         {
+            if (state == EnemyState.Chase) AudioManager.sharedInstance.Play("Growl");
             prevState = state;
             variableChaseSpeed = chaseSpeed;
             p = null;
+            
         }
         //increment timers
         timeSincePath += Time.deltaTime;
@@ -194,6 +203,7 @@ public class EnemyBehavior : MonoBehaviour
                 if (spottedTime == 0 && aggression < aggressionHuntThreshold) state = EnemyState.Prowl;
                 break;
             case EnemyState.Chase:
+                if (!source.isPlaying) source.Play();
                 if (timeSincePath > 0.3f) GeneratePath(player);
                 FollowPath(variableChaseSpeed * Time.deltaTime);
                 variableChaseSpeed += 0.7f * Time.deltaTime;
@@ -204,6 +214,7 @@ public class EnemyBehavior : MonoBehaviour
                 FollowPath(variableChaseSpeed * Time.deltaTime);
                 variableChaseSpeed += 1f * Time.deltaTime;
                 if (light.enabled == false) light.enabled = true;
+                if (!source.isPlaying) source.Play();
                 break;
             case EnemyState.Flee:
                 aggression = 0;

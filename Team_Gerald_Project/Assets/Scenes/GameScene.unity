@@ -4175,11 +4175,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2294884358870918883, guid: aaca81d4614fefd44b027b8d768016cd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.53
+      value: -7.29
       objectReference: {fileID: 0}
     - target: {fileID: 2294884358870918883, guid: aaca81d4614fefd44b027b8d768016cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.97
+      value: -3.81
       objectReference: {fileID: 0}
     - target: {fileID: 2294884358870918883, guid: aaca81d4614fefd44b027b8d768016cd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4536,7 +4536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.0485992, y: 0.000002861023, z: 0}
+  m_LocalPosition: {x: 1.8085995, y: 0.0000019073486, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4780,7 +4780,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 625838828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.53, y: -3.97, z: -10}
+  m_LocalPosition: {x: -7.29, y: -3.81, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10001,7 +10001,7 @@ MonoBehaviour:
   aggressionChaseThreshold: 80
   spottedTimeChaseThreshold: 1.4
   spottedTimeDecreaseRate: 0.1
-  biteRadius: 1.8
+  biteRadius: 2.2
   state: 0
   inBeam: 0
   playerMask:
@@ -10012,7 +10012,7 @@ MonoBehaviour:
     m_Bits: 192
   aggression: 0
   spottedTime: 0
-  sceneManager: {fileID: 0}
+  sceneManager: {fileID: 773865793}
 --- !u!114 &1303217192
 MonoBehaviour:
   m_ObjectHideFlags: 0

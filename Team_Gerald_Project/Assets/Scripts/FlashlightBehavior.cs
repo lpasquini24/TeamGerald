@@ -13,7 +13,7 @@ public class FlashlightBehavior : MonoBehaviour
     //variables
 
     //the amount of power left in the flashlight (serialized to make development easier)
-    [SerializeField] [Range(0, 100)] private float power = 100f;
+    [SerializeField] [Range(0, 100)] public float power = 100f;
     //the normal intensity of the light
     [SerializeField] private float maxIntensity = 1f;
     [SerializeField] private float minIntensity = 0f;

@@ -83,6 +83,8 @@ public class EnemyBehavior : MonoBehaviour
     //manages monster behavior when within the player's flashlight beam
     [SerializeField] private float spottedTime = 0;
 
+    public SceneManagerBehavior sceneManager;
+
 
 
 
@@ -280,7 +282,8 @@ public class EnemyBehavior : MonoBehaviour
     private void Bite()
     {
         Collider2D col = Physics2D.OverlapCircle((Vector2) transform.position, biteRadius, playerMask);
-        if (col.CompareTag("Player")) Destroy(player.gameObject);
+        if (col.CompareTag("Player") && state == EnemyState.Kill) sceneManager.LoadScene(3);
+        if (state != EnemyState.Kill) state = EnemyState.Kill;
 
     }
 

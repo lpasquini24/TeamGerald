@@ -7,7 +7,7 @@ public class Generator : MonoBehaviour
 {
     public float power;
     [SerializeField] private float batteryAmount = 10f;
-    [SerializeField] private float lossRate = 1f;
+    [SerializeField] public float lossRate = 1f;
     public Slider slider;
     //public float timePassed = 0f;
     //public float waitTime = 10f;
@@ -15,7 +15,6 @@ public class Generator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        power = 80;
     }
 
     // Update is called once per frame

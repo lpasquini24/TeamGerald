@@ -12,6 +12,7 @@ public class Sound
     public float pitch =1f;
     public bool loop = false;
     public bool fadeOnStop = false;
+    public bool StopOnLoad = true;
     [HideInInspector]
     public AudioSource source;
     [HideInInspector]
@@ -104,5 +105,12 @@ public class AudioManager : MonoBehaviour
         yield break;
     }
 
-   
+    private void OnLevelWasLoaded(int level)
+    {
+        foreach(Sound s in Sounds)
+        {
+            if (s.StopOnLoad) s.source.Stop();
+        }
+    }
+
 }
